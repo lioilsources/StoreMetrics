@@ -1,0 +1,17 @@
+# store-metrics Postgres. Small memory footprint (meant for a small home server shared by many stacks).
+# DB_BIND (address the port listens on) and DB_DIR (data directory) come from .env.
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: store-metrics-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: store_metrics
+      POSTGRES_USER: store_metrics
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set in .env}
+    command: ["postgres", "-c", "shared_buffers=16MB", "-c", "max_connections=10", "-c", "work_mem=2MB", "-c", "maintenance_work_mem=16MB", "-c", "effective_cache_size=64MB"]
+    ports:
+      - "${DB_BIND:-127.0.0.1}:5441:5432"
+    volumes:
+      - ${DB_DIR:-./db}:/var/lib/postgresql/data
+    mem_limit: 128m

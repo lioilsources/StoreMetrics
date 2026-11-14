@@ -1,0 +1,9 @@
+[Unit]
+Description=store-metrics daily collector (App Store + Google Play)
+After=network-online.target
+
+[Service]
+Type=oneshot
+WorkingDirectory=%h/deploy/store-metrics
+EnvironmentFile=%h/deploy/store-metrics/.env
+ExecStart=%h/deploy/store-metrics/bin/store-metrics

@@ -1,0 +1,9 @@
+/bin/
+.env
+/secrets/
+*.p8
+*service-account*.json
+/raw/
+/export/
+/db/
+*.csv

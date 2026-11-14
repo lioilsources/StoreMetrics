@@ -1,0 +1,35 @@
+# Apps the collector loads. apple_skus = SKU / Parent Identifier as it appears in Apple Sales reports
+# (some apps use a custom SKU, others the bundle id). play_package = Play package name.
+apps:
+  - id: mirrorbooth
+    name: Mirror Booth
+    apple_skus: [com.ol1n.mirrorbooth]
+    play_package: com.ab.mirrorbooth
+  - id: swypekids
+    name: SwypeKids
+    apple_skus: [ol1nswypekids, com.ol1n.SwypeKids]
+    play_package: com.ab.SwypeKids
+  - id: puff
+    name: Puff
+    apple_skus: [ol1npuff, com.ol1n.puff]
+    play_package: com.ol1n.puff
+  - id: kirian
+    name: Kirian
+    apple_skus: [com.ol1n.kiran]
+    play_package: com.ab.kiran
+  - id: lexify
+    name: Lexify
+    apple_skus: [ol1nduolingocards, com.ol1n.duolingoCards]
+    play_package: com.ab.duolingoCards
+  - id: pohadkomat
+    name: Pohádkomat
+    apple_skus: [com.ol1n.storyteller]
+    play_package: com.ol1n.storyteller
+  - id: poesie
+    name: Poesie Simona Clinae
+    apple_skus: [com.ol1n.PoetryStreamSC]
+    play_package: com.ab.PoetryStreamSC
+  - id: kaceny
+    name: Kačeny
+    apple_skus: [com.ol1n.kaceny]
+    play_package: com.ol1n.kaceny

@@ -1,0 +1,10 @@
+[Unit]
+Description=Run store-metrics daily (Apple publishes the previous day in the morning CET)
+
+[Timer]
+OnCalendar=*-*-* 09:30:00
+Persistent=true
+RandomizedDelaySec=10min
+
+[Install]
+WantedBy=timers.target
