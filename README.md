@@ -24,7 +24,7 @@ Vedle toho příjemce anonymního měření z appek (`telemetry-ingest`, sekce [
 
 `downloads` se nesčítá přes různé `kind` (u Play znamená jednou instalace, jednou akvizici z listingu).
 
-Které appky se načítají, určuje `apps.yaml` (Apple SKU a Play package name).
+Které appky se načítají, určuje `apps.yaml` (Apple SKU a Play package name). Appka, která ještě není v obchodě, tam je jen s `id` a `name`: collector pro ni nic nestahuje, ale id slouží pro klíče měření. Store identifikátory se doplní po vydání.
 
 ## Vývoj a nasazení
 
