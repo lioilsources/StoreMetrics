@@ -1,0 +1,5 @@
+{"v":1,"app":"kirian","events":[
+  {"n":"app_open","t":"2026-11-14T10:00:00.000Z","s":"0123456789abcdef0123456789abcdef","i":1,
+   "p":{"start":"cold","app_version":"2.3.4","platform":"ios","lang":"cs",
+        "session_band":"1","days_band":"0","first_session":true,"tester":false}}
+]}

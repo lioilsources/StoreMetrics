@@ -1,5 +1,9 @@
 # store-metrics Postgres. Small memory footprint (meant for a small home server shared by many stacks).
 # DB_BIND (address the port listens on) and DB_DIR (data directory) come from .env.
+#
+# Telemetry receiver (profile `telemetry`, enabled with COMPOSE_PROFILES=telemetry in .env):
+#   cloudflared (tunnel, outbound only) -> caddy:80 (body limit, no access log) -> ingest:8080 -> db
+# Nothing of it is published on the host. Memory budget of the three services: 120 MB (40 + 32 + 48).
 services:
   db:
     image: postgres:16-alpine
@@ -15,3 +19,54 @@ services:
     volumes:
       - ${DB_DIR:-./db}:/var/lib/postgresql/data
     mem_limit: 128m
+
+  # Static Go binary from `make deploy` (bin/telemetry-ingest), run in a distroless image: no build on the server.
+  ingest:
+    image: gcr.io/distroless/static-debian12:nonroot
+    container_name: store-metrics-ingest
+    profiles: [telemetry]
+    restart: unless-stopped
+    depends_on: [db]
+    entrypoint: ["/app/telemetry-ingest"]
+    environment:
+      # Same database as the collector, over the compose network. POSTGRES_PASSWORD must be URL-safe.
+      DATABASE_URL: postgres://store_metrics:${POSTGRES_PASSWORD}@db:5432/store_metrics?sslmode=disable&pool_max_conns=3
+      LISTEN: ":8080"
+      TELEMETRY_RATE_PER_MIN: ${TELEMETRY_RATE_PER_MIN:-60}
+      TELEMETRY_DAILY_CAP: ${TELEMETRY_DAILY_CAP:-200000}
+      GOMEMLIMIT: 28MiB
+    volumes:
+      - ./bin/telemetry-ingest:/app/telemetry-ingest:ro
+    healthcheck:
+      test: ["CMD", "/app/telemetry-ingest", "healthcheck"]
+      interval: 30s
+      timeout: 5s
+      start_period: 10s
+    mem_limit: 40m
+    logging: &logging
+      driver: json-file
+      options: { max-size: 10m, max-file: "3" }
+
+  caddy:
+    image: caddy:2-alpine
+    container_name: store-metrics-caddy
+    profiles: [telemetry]
+    restart: unless-stopped
+    depends_on: [ingest]
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+    mem_limit: 32m
+    logging: *logging
+
+  # Tunnel created by hand in Cloudflare Zero Trust; its public hostname points to http://caddy:80.
+  cloudflared:
+    image: cloudflare/cloudflared:2026.7.3
+    container_name: store-metrics-cloudflared
+    profiles: [telemetry]
+    restart: unless-stopped
+    depends_on: [caddy]
+    command: ["tunnel", "--no-autoupdate", "--loglevel", "warn", "run"]
+    environment:
+      TUNNEL_TOKEN: ${TELEMETRY_TUNNEL_TOKEN:-}
+    mem_limit: 48m
+    logging: *logging

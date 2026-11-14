@@ -1,0 +1,7 @@
+{
+ "v": 1,
+ "app": "lexify",
+ "events": {
+  "n": "app_open"
+ }
+}

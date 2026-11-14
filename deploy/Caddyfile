@@ -1,0 +1,38 @@
+# Telemetry receiver. TLS terminates at Cloudflare; the tunnel talks plain HTTP to Caddy.
+# No access log and no HTTP error logs: those would contain client addresses (PLAN-analytika §4.11).
+{
+	admin off
+	auto_https off
+	log default {
+		output stderr
+		level WARN
+		exclude http.log.access http.log.error http.handlers.reverse_proxy
+	}
+}
+
+:80 {
+	request_body {
+		max_size 64KB
+	}
+
+	header {
+		-Server
+		X-Content-Type-Options nosniff
+		Referrer-Policy no-referrer
+		Cache-Control no-store
+	}
+
+	@ingest path /v1/batch /healthz
+	handle @ingest {
+		reverse_proxy ingest:8080 {
+			# Only the country and the limiter key reach ingest; nothing else about the client.
+			header_up -X-Forwarded-For
+			header_up -X-Real-IP
+			header_up -True-Client-IP
+		}
+	}
+
+	handle {
+		respond 404
+	}
+}

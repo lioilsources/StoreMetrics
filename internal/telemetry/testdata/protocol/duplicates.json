@@ -1,0 +1,57 @@
+{
+ "v": 1,
+ "app": "lexify",
+ "events": [
+  {
+   "n": "screen_view",
+   "t": "2026-11-14T10:00:00.000Z",
+   "s": "3f2a9c0e5b7d41e8a6c2f09b1d4e7a53",
+   "i": 1,
+   "p": {
+    "screen": "home",
+    "prev": "none",
+    "app_version": "2.3.4",
+    "platform": "ios",
+    "lang": "cs",
+    "session_band": "1",
+    "days_band": "0",
+    "first_session": true,
+    "tester": false
+   }
+  },
+  {
+   "n": "screen_view",
+   "t": "2026-11-14T10:00:00.000Z",
+   "s": "3f2a9c0e5b7d41e8a6c2f09b1d4e7a53",
+   "i": 1,
+   "p": {
+    "screen": "home",
+    "prev": "none",
+    "app_version": "2.3.4",
+    "platform": "ios",
+    "lang": "cs",
+    "session_band": "1",
+    "days_band": "0",
+    "first_session": true,
+    "tester": false
+   }
+  },
+  {
+   "n": "screen_view",
+   "t": "2026-11-14T10:00:00.000Z",
+   "s": "b81c4d2e9f0a47b3c5d6e7f8091a2b3c",
+   "i": 2,
+   "p": {
+    "screen": "deck",
+    "prev": "home",
+    "app_version": "2.3.4",
+    "platform": "ios",
+    "lang": "cs",
+    "session_band": "1",
+    "days_band": "0",
+    "first_session": true,
+    "tester": false
+   }
+  }
+ ]
+}
