@@ -36,10 +36,11 @@ apps:
     name: Kačeny
     apple_skus: [com.ol1n.kaceny]
     play_package: com.ol1n.kaceny
-
-  # Telemetry only for now: not in a store yet, so no store identifiers.
   - id: webtoon
     name: Toonfork
+    play_package: com.ol1n.webtoon
+
+  # Telemetry only for now: not in a store yet, so no store identifiers.
   - id: hajanek
     name: Hajánek
   - id: papanek
