@@ -1,5 +1,8 @@
 # Apps the collector loads. apple_skus = SKU / Parent Identifier as it appears in Apple Sales reports
 # (some apps use a custom SKU, others the bundle id). play_package = Play package name.
+# An app that is not in a store yet has no apple_skus and no play_package: the daily collector
+# loads nothing for it, but the id exists for telemetry keys (`store-metrics telemetry key new <id>`).
+# Add the store identifiers once the app is published.
 apps:
   - id: mirrorbooth
     name: Mirror Booth
@@ -33,3 +36,26 @@ apps:
     name: Kačeny
     apple_skus: [com.ol1n.kaceny]
     play_package: com.ol1n.kaceny
+  - id: webtoon
+    name: Toonfork
+    play_package: com.ol1n.webtoon
+
+  # Telemetry only for now: not in a store yet, so no store identifiers.
+  - id: hajanek
+    name: Hajánek
+  - id: papanek
+    name: Papánek
+  - id: behanek
+    name: Běhánek
+  - id: immunorun
+    name: ImmunoRun
+  - id: handwrittenstickers
+    name: HandWrittenStickers
+  - id: alienmatch
+    name: AlienMatch
+  - id: restyler
+    name: Restyler
+  - id: tlumocnik
+    name: Tlumočník
+  - id: djfy
+    name: DJfy
