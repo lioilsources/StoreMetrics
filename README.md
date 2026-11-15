@@ -140,7 +140,7 @@ ssh <server> 'cd ~/deploy/store-metrics && set -a && . ./.env && set +a && ./bin
 2. **Tunel a DNS:** nový pojmenovaný tunel pro měření (`cloudflared tunnel create store-metrics-telemetry` a `cloudflared tunnel route dns store-metrics-telemetry <adresa>`, nebo totéž v Cloudflare Zero Trust). Cíl `http://caddy:80` nastavuje compose přes `TUNNEL_URL`, tunel tedy nepotřebuje vlastní pravidla. Token (`cloudflared tunnel token store-metrics-telemetry`) do `.env` jako `TELEMETRY_TUNNEL_TOKEN`, rovnou rourou, ne přes chat.
 3. **`.env`:** `COMPOSE_PROFILES=telemetry` (případně `TELEMETRY_RATE_PER_MIN`, `TELEMETRY_DAILY_CAP`). `POSTGRES_PASSWORD` musí být bez znaků, které se v URL escapují.
 4. **Nasazení:** `make deploy HOST=<server>`, pak na serveru `cd ~/deploy/store-metrics && docker compose up -d --no-deps ingest caddy cloudflared`.
-5. **Kontrola:** `docker compose ps` (ingest `healthy`), `curl -fsS https://<adresa>/healthz` vrátí `ok`, `docker stats --no-stream` u tří nových kontejnerů dohromady pod 120 MB.
+5. **Kontrola:** `docker compose ps` (ingest `healthy`), `curl -fsS https://<adresa>/healthz` vrátí `ok`, `docker stats --no-stream` u tří nových kontejnerů dohromady pod 136 MB.
 6. **Klíč appky do GitHubu** (až po zveřejnění nové politiky soukromí appky a vyplnění formulářů v obchodech):
 
    ```
@@ -151,6 +151,6 @@ ssh <server> 'cd ~/deploy/store-metrics && set -a && . ./.env && set +a && ./bin
 
 7. **Zkouška:** dávka s klíčem testovací appky dá 204 a je v `telemetry.events`; špatný klíč 401, špatný tvar 400; `SELECT count(*) FROM telemetry.events WHERE props::text ~ '\d+\.\d+\.\d+\.\d+'` je 0.
 
-Rozpočet paměti (limity v compose): ingest 40 MB (`GOMEMLIMIT` 28 MiB), caddy 32 MB, cloudflared 48 MB, celkem 120 MB. Podobné dvojice caddy + cloudflared na serveru dnes berou kolem 8–10 a 13–16 MB.
+Rozpočet paměti (limity v compose): ingest 40 MB (`GOMEMLIMIT` 28 MiB), caddy 48 MB, cloudflared 48 MB, celkem 136 MB. Naměřeno po spuštění na serveru (15. 11. 2026): ingest 12 MB, caddy 31 MB, cloudflared 24 MB.
 
 Vypnutí: `store-metrics telemetry key revoke <app>` pro jednu appku, `docker compose stop ingest caddy cloudflared` pro všechno (klienti drží frontu a pošlou později).
