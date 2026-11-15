@@ -58,7 +58,8 @@ services:
     mem_limit: 32m
     logging: *logging
 
-  # Tunnel created by hand in Cloudflare Zero Trust; its public hostname points to http://caddy:80.
+  # Named tunnel (created with `cloudflared tunnel create` or in Cloudflare Zero Trust). TUNNEL_URL is the
+  # single origin, so the tunnel needs no ingress config of its own; DNS points the hostname at the tunnel.
   cloudflared:
     image: cloudflare/cloudflared:2026.7.3
     container_name: store-metrics-cloudflared
@@ -68,5 +69,6 @@ services:
     command: ["tunnel", "--no-autoupdate", "--loglevel", "warn", "run"]
     environment:
       TUNNEL_TOKEN: ${TELEMETRY_TUNNEL_TOKEN:-}
+      TUNNEL_URL: http://caddy:80
     mem_limit: 48m
     logging: *logging

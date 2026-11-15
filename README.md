@@ -137,7 +137,7 @@ ssh <server> 'cd ~/deploy/store-metrics && set -a && . ./.env && set +a && ./bin
 ### Zapnutí (jednou, ručně)
 
 1. **`.env` na serveru doplnit o `DB_DIR` a `DB_BIND`** s hodnotami, které dnes stojí natvrdo v nasazeném `docker-compose.yml` (datový adresář a adresa portu 5441). Repo verze compose je čte z `.env`; bez nich by po `make deploy` další `docker compose up` založil prázdnou databázi v `./db`.
-2. **Tunel a DNS (Cloudflare Zero Trust):** nový tunel pro měření, public hostname na vlastní doméně, služba `http://caddy:80`. Token tunelu do `.env` jako `TELEMETRY_TUNNEL_TOKEN`.
+2. **Tunel a DNS:** nový pojmenovaný tunel pro měření (`cloudflared tunnel create store-metrics-telemetry` a `cloudflared tunnel route dns store-metrics-telemetry <adresa>`, nebo totéž v Cloudflare Zero Trust). Cíl `http://caddy:80` nastavuje compose přes `TUNNEL_URL`, tunel tedy nepotřebuje vlastní pravidla. Token (`cloudflared tunnel token store-metrics-telemetry`) do `.env` jako `TELEMETRY_TUNNEL_TOKEN`, rovnou rourou, ne přes chat.
 3. **`.env`:** `COMPOSE_PROFILES=telemetry` (případně `TELEMETRY_RATE_PER_MIN`, `TELEMETRY_DAILY_CAP`). `POSTGRES_PASSWORD` musí být bez znaků, které se v URL escapují.
 4. **Nasazení:** `make deploy HOST=<server>`, pak na serveru `cd ~/deploy/store-metrics && docker compose up -d --no-deps ingest caddy cloudflared`.
 5. **Kontrola:** `docker compose ps` (ingest `healthy`), `curl -fsS https://<adresa>/healthz` vrátí `ok`, `docker stats --no-stream` u tří nových kontejnerů dohromady pod 120 MB.
