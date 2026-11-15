@@ -3,7 +3,7 @@
 #
 # Telemetry receiver (profile `telemetry`, enabled with COMPOSE_PROFILES=telemetry in .env):
 #   cloudflared (tunnel, outbound only) -> caddy:80 (body limit, no access log) -> ingest:8080 -> db
-# Nothing of it is published on the host. Memory budget of the three services: 120 MB (40 + 32 + 48).
+# Nothing of it is published on the host. Memory budget of the three services: 136 MB (40 + 48 + 48).
 services:
   db:
     image: postgres:16-alpine
@@ -55,7 +55,7 @@ services:
     depends_on: [ingest]
     volumes:
       - ./Caddyfile:/etc/caddy/Caddyfile:ro
-    mem_limit: 32m
+    mem_limit: 48m  # measured ~31 MB idle on JODA (2026-11-15); 32m left no headroom
     logging: *logging
 
   # Named tunnel (created with `cloudflared tunnel create` or in Cloudflare Zero Trust). TUNNEL_URL is the
