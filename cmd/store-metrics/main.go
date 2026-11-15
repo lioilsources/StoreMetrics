@@ -2,6 +2,7 @@
 //
 // Runs once and exits (systemd user timer on JODA). Configuration via env (see deploy/env.example)
 // and apps.yaml. Exit code 1 when any source failed; partial data is still committed.
+// Subcommands `telemetry …` and `report …` manage and read usage telemetry (see telemetry.go).
 package main
 
 import (
@@ -42,6 +43,9 @@ func env(k, def string) string {
 }
 
 func main() {
+	if code, ok := subcommand(os.Args[1:]); ok {
+		os.Exit(code)
+	}
 	cfgPath := flag.String("config", env("APPS_CONFIG", "apps.yaml"), "apps.yaml")
 	days := flag.Int("apple-days", 45, "how many past days of Apple Sales to make sure are loaded")
 	only := flag.String("only", "", "apple | google (default both)")

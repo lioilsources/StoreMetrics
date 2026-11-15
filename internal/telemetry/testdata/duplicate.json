@@ -1,0 +1,6 @@
+{"v":1,"app":"lexify","events":[
+  {"n":"screen_view","t":"2026-11-14T10:00:00.000Z","s":"0123456789abcdef0123456789abcdef","i":7,"p":{"screen":"deck"}},
+  {"n":"screen_view","t":"2026-11-14T10:00:00.000Z","s":"0123456789abcdef0123456789abcdef","i":7,"p":{"screen":"deck"}},
+  {"n":"screen_view","t":"2026-11-14T10:00:00.000Z","s":"0123456789abcdef0123456789abcdef","p":{"screen":"deck"}},
+  {"n":"screen_view","t":"2026-11-14T10:00:00.000Z","s":"0123456789abcdef0123456789abcdef","p":{"screen":"deck"}}
+]}

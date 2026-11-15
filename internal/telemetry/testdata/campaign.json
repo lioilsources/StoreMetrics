@@ -1,0 +1,8 @@
+{"v":1,"app":"lexify","events":[
+  {"n":"app_open","t":"2026-11-14T10:00:00.000Z","s":"0123456789abcdef0123456789abcdef","i":1,
+   "p":{"start":"cold","platform":"android","first_session":true,"tester":false,"campaign":"flyer-cafe"}},
+  {"n":"app_open","t":"2026-11-14T10:00:00.000Z","s":"00000000000000000000000000000003","i":1,
+   "p":{"start":"cold","platform":"android","first_session":true,"tester":false,"campaign":"made-up"}},
+  {"n":"app_open","t":"2026-11-14T10:00:00.000Z","s":"00000000000000000000000000000004","i":1,
+   "p":{"start":"cold","platform":"android","first_session":true,"tester":true}}
+]}

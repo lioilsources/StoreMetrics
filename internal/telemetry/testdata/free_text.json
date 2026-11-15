@@ -1,0 +1,14 @@
+{"v":1,"app":"lexify","events":[
+  {"n":"screen_view","t":"2026-11-14T10:00:00.000Z","s":"0123456789abcdef0123456789abcdef","i":1,
+   "p":{"screen":"Hello, this is my name: Jan Novák","platform":"ios"}},
+  {"n":"Screen View","t":"2026-11-14T10:00:00.000Z","s":"0123456789abcdef0123456789abcdef","i":2,
+   "p":{"screen":"deck"}},
+  {"n":"error_shown","t":"2026-11-14T10:00:00.000Z","s":"0123456789abcdef0123456789abcdef","i":3,
+   "p":{"kind":"network","detail":{"message":"connection timed out after retry"}}},
+  {"n":"locked_tap","t":"2026-11-14T10:00:00.000Z","s":"0123456789abcdef0123456789abcdef","i":4,
+   "p":{"target":"deck","price":1.99}},
+  {"n":"locked_tap","t":"2026-11-14T10:00:00.000Z","s":"0123456789abcdef0123456789abcdef","i":5,
+   "p":{"target":"deck","email":"someone@example.com"}},
+  {"n":"locked_tap","t":"2026-11-14T10:00:00.000Z","s":"0123456789abcdef0123456789abcdef","i":6,
+   "p":{"target":"deck_animals","owned":false,"count":3}}
+]}

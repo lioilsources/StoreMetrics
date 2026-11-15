@@ -1,0 +1,69 @@
+{
+ "note": "Expected collector behaviour per file; see docs/protocol.md.",
+ "cases": [
+  {
+   "file": "valid.json",
+   "status": 204,
+   "stored": 5,
+   "rejected": 0,
+   "duplicates": 0
+  },
+  {
+   "file": "bad_version.json",
+   "status": 400
+  },
+  {
+   "file": "bad_app.json",
+   "status": 400
+  },
+  {
+   "file": "missing_app.json",
+   "status": 400
+  },
+  {
+   "file": "events_not_list.json",
+   "status": 400
+  },
+  {
+   "file": "empty_events.json",
+   "status": 400
+  },
+  {
+   "file": "too_many_events.json",
+   "status": 400
+  },
+  {
+   "file": "mixed_events.json",
+   "status": 204,
+   "stored": 2,
+   "rejected": 17,
+   "duplicates": 0,
+   "rejected_reasons": [
+    "bad name",
+    "name too long",
+    "free text value",
+    "string too long",
+    "int above 10^9",
+    "negative int",
+    "fraction",
+    "33 properties",
+    "object value",
+    "list value",
+    "null value",
+    "bad property name",
+    "session not 32 hex",
+    "missing time",
+    "unparseable time",
+    "negative order",
+    "props not an object"
+   ]
+  },
+  {
+   "file": "duplicates.json",
+   "status": 204,
+   "stored": 2,
+   "rejected": 0,
+   "duplicates": 1
+  }
+ ]
+}

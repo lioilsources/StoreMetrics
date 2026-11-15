@@ -1,0 +1,8 @@
+{"v":1,"app":"lexify","events":[
+  {"n":"app_open","t":"2026-11-14T13:00:00.000Z","s":"0123456789abcdef0123456789abcdef","i":1,
+   "p":{"start":"cold","platform":"android","first_session":false}},
+  {"n":"app_open","t":"2026-11-14T12:05:00.000Z","s":"00000000000000000000000000000001","i":1,
+   "p":{"start":"resume","platform":"android","first_session":false}},
+  {"n":"app_open","t":"2026-10-01T10:00:00.000Z","s":"00000000000000000000000000000002","i":1,
+   "p":{"start":"cold","platform":"android","first_session":false}}
+]}

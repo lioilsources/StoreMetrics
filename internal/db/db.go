@@ -14,6 +14,11 @@ import (
 //go:embed schema.sql
 var schema string
 
+// telemetrySchema is applied after schema.sql (protocol v1 events, see internal/telemetry).
+//
+//go:embed telemetry.sql
+var telemetrySchema string
+
 // Row is one line of metrics_daily. Empty strings (not NULL) in key columns keep the primary key simple.
 type Row struct {
 	Date          time.Time
@@ -45,6 +50,10 @@ func Open(ctx context.Context, url string) (*DB, error) {
 	if _, err := p.Exec(ctx, schema); err != nil {
 		p.Close()
 		return nil, fmt.Errorf("schema: %w", err)
+	}
+	if _, err := p.Exec(ctx, telemetrySchema); err != nil {
+		p.Close()
+		return nil, fmt.Errorf("telemetry schema: %w", err)
 	}
 	return &DB{p}, nil
 }

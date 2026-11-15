@@ -1,0 +1,329 @@
+{
+ "v": 1,
+ "app": "lexify",
+ "events": [
+  {
+   "n": "screen_view",
+   "t": "2026-11-14T10:00:00.000Z",
+   "s": "3f2a9c0e5b7d41e8a6c2f09b1d4e7a53",
+   "i": 1,
+   "p": {
+    "screen": "home",
+    "prev": "none",
+    "app_version": "2.3.4",
+    "platform": "ios",
+    "lang": "cs",
+    "session_band": "1",
+    "days_band": "0",
+    "first_session": true,
+    "tester": false
+   }
+  },
+  {
+   "n": "screen_view",
+   "t": "2026-11-14T10:00:00.000Z",
+   "s": "3f2a9c0e5b7d41e8a6c2f09b1d4e7a53",
+   "p": {
+    "screen": "deck",
+    "prev": "home",
+    "app_version": "2.3.4",
+    "platform": "ios",
+    "lang": "cs",
+    "session_band": "1",
+    "days_band": "0",
+    "first_session": true,
+    "tester": false
+   }
+  },
+  {
+   "n": "AppOpen",
+   "t": "2026-11-14T10:00:00.000Z",
+   "s": "3f2a9c0e5b7d41e8a6c2f09b1d4e7a53",
+   "i": 2,
+   "p": {
+    "start": "cold",
+    "app_version": "2.3.4",
+    "platform": "ios",
+    "lang": "cs",
+    "session_band": "1",
+    "days_band": "0",
+    "first_session": true,
+    "tester": false
+   }
+  },
+  {
+   "n": "abbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+   "t": "2026-11-14T10:00:00.000Z",
+   "s": "3f2a9c0e5b7d41e8a6c2f09b1d4e7a53",
+   "i": 3,
+   "p": {
+    "app_version": "2.3.4",
+    "platform": "ios",
+    "lang": "cs",
+    "session_band": "1",
+    "days_band": "0",
+    "first_session": true,
+    "tester": false
+   }
+  },
+  {
+   "n": "deck_open",
+   "t": "2026-11-14T10:00:00.000Z",
+   "s": "3f2a9c0e5b7d41e8a6c2f09b1d4e7a53",
+   "i": 4,
+   "p": {
+    "deck": "Moje zvířátka",
+    "app_version": "2.3.4",
+    "platform": "ios",
+    "lang": "cs",
+    "session_band": "1",
+    "days_band": "0",
+    "first_session": true,
+    "tester": false
+   }
+  },
+  {
+   "n": "deck_open",
+   "t": "2026-11-14T10:00:00.000Z",
+   "s": "3f2a9c0e5b7d41e8a6c2f09b1d4e7a53",
+   "i": 5,
+   "p": {
+    "deck": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "app_version": "2.3.4",
+    "platform": "ios",
+    "lang": "cs",
+    "session_band": "1",
+    "days_band": "0",
+    "first_session": true,
+    "tester": false
+   }
+  },
+  {
+   "n": "deck_open",
+   "t": "2026-11-14T10:00:00.000Z",
+   "s": "3f2a9c0e5b7d41e8a6c2f09b1d4e7a53",
+   "i": 6,
+   "p": {
+    "cards": 1000000001,
+    "app_version": "2.3.4",
+    "platform": "ios",
+    "lang": "cs",
+    "session_band": "1",
+    "days_band": "0",
+    "first_session": true,
+    "tester": false
+   }
+  },
+  {
+   "n": "deck_open",
+   "t": "2026-11-14T10:00:00.000Z",
+   "s": "3f2a9c0e5b7d41e8a6c2f09b1d4e7a53",
+   "i": 7,
+   "p": {
+    "cards": -1,
+    "app_version": "2.3.4",
+    "platform": "ios",
+    "lang": "cs",
+    "session_band": "1",
+    "days_band": "0",
+    "first_session": true,
+    "tester": false
+   }
+  },
+  {
+   "n": "deck_open",
+   "t": "2026-11-14T10:00:00.000Z",
+   "s": "3f2a9c0e5b7d41e8a6c2f09b1d4e7a53",
+   "i": 8,
+   "p": {
+    "cards": 1.5,
+    "app_version": "2.3.4",
+    "platform": "ios",
+    "lang": "cs",
+    "session_band": "1",
+    "days_band": "0",
+    "first_session": true,
+    "tester": false
+   }
+  },
+  {
+   "n": "deck_open",
+   "t": "2026-11-14T10:00:00.000Z",
+   "s": "3f2a9c0e5b7d41e8a6c2f09b1d4e7a53",
+   "i": 9,
+   "p": {
+    "x00": 0,
+    "x01": 1,
+    "x02": 2,
+    "x03": 3,
+    "x04": 4,
+    "x05": 5,
+    "x06": 6,
+    "x07": 7,
+    "x08": 8,
+    "x09": 9,
+    "x10": 10,
+    "x11": 11,
+    "x12": 12,
+    "x13": 13,
+    "x14": 14,
+    "x15": 15,
+    "x16": 16,
+    "x17": 17,
+    "x18": 18,
+    "x19": 19,
+    "x20": 20,
+    "x21": 21,
+    "x22": 22,
+    "x23": 23,
+    "x24": 24,
+    "x25": 25,
+    "app_version": "2.3.4",
+    "platform": "ios",
+    "lang": "cs",
+    "session_band": "1",
+    "days_band": "0",
+    "first_session": true,
+    "tester": false
+   }
+  },
+  {
+   "n": "deck_open",
+   "t": "2026-11-14T10:00:00.000Z",
+   "s": "3f2a9c0e5b7d41e8a6c2f09b1d4e7a53",
+   "i": 10,
+   "p": {
+    "deck": {
+     "id": "animals"
+    },
+    "app_version": "2.3.4",
+    "platform": "ios",
+    "lang": "cs",
+    "session_band": "1",
+    "days_band": "0",
+    "first_session": true,
+    "tester": false
+   }
+  },
+  {
+   "n": "deck_open",
+   "t": "2026-11-14T10:00:00.000Z",
+   "s": "3f2a9c0e5b7d41e8a6c2f09b1d4e7a53",
+   "i": 11,
+   "p": {
+    "deck": [
+     "animals"
+    ],
+    "app_version": "2.3.4",
+    "platform": "ios",
+    "lang": "cs",
+    "session_band": "1",
+    "days_band": "0",
+    "first_session": true,
+    "tester": false
+   }
+  },
+  {
+   "n": "deck_open",
+   "t": "2026-11-14T10:00:00.000Z",
+   "s": "3f2a9c0e5b7d41e8a6c2f09b1d4e7a53",
+   "i": 12,
+   "p": {
+    "deck": null,
+    "app_version": "2.3.4",
+    "platform": "ios",
+    "lang": "cs",
+    "session_band": "1",
+    "days_band": "0",
+    "first_session": true,
+    "tester": false
+   }
+  },
+  {
+   "n": "deck_open",
+   "t": "2026-11-14T10:00:00.000Z",
+   "s": "3f2a9c0e5b7d41e8a6c2f09b1d4e7a53",
+   "i": 13,
+   "p": {
+    "Deck": "animals",
+    "app_version": "2.3.4",
+    "platform": "ios",
+    "lang": "cs",
+    "session_band": "1",
+    "days_band": "0",
+    "first_session": true,
+    "tester": false
+   }
+  },
+  {
+   "n": "deck_open",
+   "t": "2026-11-14T10:00:00.000Z",
+   "s": "abc",
+   "i": 14,
+   "p": {
+    "deck": "animals",
+    "app_version": "2.3.4",
+    "platform": "ios",
+    "lang": "cs",
+    "session_band": "1",
+    "days_band": "0",
+    "first_session": true,
+    "tester": false
+   }
+  },
+  {
+   "n": "deck_open",
+   "s": "3f2a9c0e5b7d41e8a6c2f09b1d4e7a53",
+   "i": 15,
+   "p": {
+    "deck": "animals",
+    "app_version": "2.3.4",
+    "platform": "ios",
+    "lang": "cs",
+    "session_band": "1",
+    "days_band": "0",
+    "first_session": true,
+    "tester": false
+   }
+  },
+  {
+   "n": "deck_open",
+   "t": "yesterday",
+   "s": "3f2a9c0e5b7d41e8a6c2f09b1d4e7a53",
+   "i": 16,
+   "p": {
+    "deck": "animals",
+    "app_version": "2.3.4",
+    "platform": "ios",
+    "lang": "cs",
+    "session_band": "1",
+    "days_band": "0",
+    "first_session": true,
+    "tester": false
+   }
+  },
+  {
+   "n": "deck_open",
+   "t": "2026-11-14T10:00:00.000Z",
+   "s": "3f2a9c0e5b7d41e8a6c2f09b1d4e7a53",
+   "i": -1,
+   "p": {
+    "deck": "animals",
+    "app_version": "2.3.4",
+    "platform": "ios",
+    "lang": "cs",
+    "session_band": "1",
+    "days_band": "0",
+    "first_session": true,
+    "tester": false
+   }
+  },
+  {
+   "n": "deck_open",
+   "t": "2026-11-14T10:00:00.000Z",
+   "s": "3f2a9c0e5b7d41e8a6c2f09b1d4e7a53",
+   "i": 17,
+   "p": "deck=animals"
+  }
+ ]
+}
