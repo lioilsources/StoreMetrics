@@ -39,10 +39,11 @@ apps:
   - id: webtoon
     name: Toonfork
     play_package: com.ol1n.webtoon
-
-  # Telemetry only for now: not in a store yet, so no store identifiers.
   - id: hajanek
     name: Hajánek
+    play_package: com.ol1n.hajanek
+
+  # Telemetry only for now: not in a store yet, so no store identifiers.
   - id: papanek
     name: Papánek
   - id: behanek
