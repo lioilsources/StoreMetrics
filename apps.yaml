@@ -48,10 +48,12 @@ apps:
     name: Papánek
   - id: behanek
     name: Běhánek
+    play_package: com.ol1n.behanek
   - id: immunorun
     name: ImmunoRun
   - id: handwrittenstickers
     name: HandWrittenStickers
+    play_package: com.ol1n.handwrittenStickers
   - id: alienmatch
     name: AlienMatch
   - id: restyler
