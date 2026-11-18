@@ -5,12 +5,15 @@
 //	stats/installs/installs_<pkg>_<YYYYMM>_country.csv
 //	stats/store_performance/store_performance_<pkg>_<YYYYMM>_country.csv
 //	stats/store_performance/store_performance_<pkg>_<YYYYMM>_traffic_source.csv
+//	sales/salesreport_<YYYYMM>.zip (all apps, UTF-8 CSV inside)
 //
 // Kinds: "installs" (downloads = daily user installs), "store_performance" (page_views = listing visitors,
-// downloads = listing acquisitions) and "traffic" (same, split by source/UTM). Never sum downloads across kinds.
+// downloads = listing acquisitions), "traffic" (same, split by source/UTM) and "sales" (units, proceeds).
+// Never sum downloads across kinds.
 package google
 
 import (
+	"archive/zip"
 	"bytes"
 	"crypto"
 	"crypto/rand"
@@ -257,6 +260,110 @@ func Parse(kind, app string, raw []byte) ([]db.Row, error) {
 		out = append(out, row)
 	}
 	return out, nil
+}
+
+// SalesMonth returns the month of a sales report object (sales/salesreport_<YYYYMM>.zip), ok=false otherwise.
+func SalesMonth(name string) (time.Time, bool) {
+	base := strings.TrimPrefix(name, "sales/salesreport_")
+	if base == name || !strings.HasSuffix(base, ".zip") {
+		return time.Time{}, false
+	}
+	m, err := time.Parse("200601", strings.TrimSuffix(base, ".zip"))
+	return m, err == nil
+}
+
+// ParseSales reads a monthly sales report zip (one UTF-8 CSV, one row per order event) into daily rows of
+// kind "sales": units = charged orders minus refunds/chargebacks, proceeds = Item Price (the price without
+// the tax Google collected, before Google's service fee — Play has no net figure in this report).
+// Buyer city, state and postal code are never read. appOf maps a package to an app id ("" = unknown).
+func ParseSales(zipBytes []byte, appOf func(string) string) (rows []db.Row, unknown []string, err error) {
+	zr, err := zip.NewReader(bytes.NewReader(zipBytes), int64(len(zipBytes)))
+	if err != nil {
+		return nil, nil, err
+	}
+	type key struct {
+		date             time.Time
+		app, country, cc string
+	}
+	agg := map[key]*db.Row{}
+	var order []key
+	seen := map[string]bool{}
+	for _, f := range zr.File {
+		if !strings.HasSuffix(strings.ToLower(f.Name), ".csv") {
+			continue
+		}
+		rc, err := f.Open()
+		if err != nil {
+			return nil, nil, err
+		}
+		b, err := io.ReadAll(rc)
+		rc.Close()
+		if err != nil {
+			return nil, nil, err
+		}
+		r := csv.NewReader(bytes.NewReader(decode(b)))
+		r.FieldsPerRecord = -1
+		r.LazyQuotes = true
+		recs, err := r.ReadAll()
+		if err != nil {
+			return nil, nil, err
+		}
+		if len(recs) < 1 {
+			continue
+		}
+		col := map[string]int{}
+		for i, h := range recs[0] {
+			col[strings.ToLower(strings.TrimSpace(h))] = i
+		}
+		get := func(rec []string, n string) string {
+			if i, ok := col[n]; ok && i < len(rec) {
+				return strings.TrimSpace(rec[i])
+			}
+			return ""
+		}
+		for _, rec := range recs[1:] {
+			d, err := time.Parse("2006-01-02", get(rec, "order charged date"))
+			if err != nil {
+				continue
+			}
+			sign := 0
+			switch st := strings.ToLower(get(rec, "financial status")); {
+			case st == "charged":
+				sign = 1
+			case strings.Contains(st, "refund"), strings.Contains(st, "chargeback"):
+				sign = -1
+			}
+			if sign == 0 {
+				continue
+			}
+			pkg := get(rec, "package id")
+			app := appOf(pkg)
+			if app == "" {
+				if !seen[pkg] {
+					seen[pkg] = true
+					unknown = append(unknown, pkg)
+				}
+				continue
+			}
+			price, _ := strconv.ParseFloat(strings.ReplaceAll(get(rec, "item price"), ",", ""), 64)
+			if price < 0 {
+				price = -price
+			}
+			k := key{d, app, get(rec, "country of buyer"), get(rec, "currency of sale")}
+			row := agg[k]
+			if row == nil {
+				row = &db.Row{Date: d, Store: "google", AppID: app, Country: k.country, ProceedsCcy: k.cc}
+				agg[k] = row
+				order = append(order, k)
+			}
+			row.Units += sign
+			row.Proceeds += float64(sign) * price
+		}
+	}
+	for _, k := range order {
+		rows = append(rows, *agg[k])
+	}
+	return rows, unknown, nil
 }
 
 func normSource(s string) string {

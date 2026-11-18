@@ -13,6 +13,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"slices"
 	"strings"
 	"time"
 
@@ -204,5 +205,46 @@ func runGoogle(ctx context.Context, d *db.DB, raw string, pkgToApp map[string]st
 		}
 	}
 	log.Printf("google: loaded %d files", files)
+
+	// Monthly sales reports (all apps in one zip). The raw zip is not kept: it holds buyer city and postal code.
+	var playApps []string
+	for _, a := range pkgToApp {
+		if !slices.Contains(playApps, a) {
+			playApps = append(playApps, a)
+		}
+	}
+	objs, err := c.List("sales/")
+	if err != nil {
+		d.LogRun(ctx, "google", "sales", nil, false, err.Error(), 0)
+		return errors.Join(append(errs, err)...)
+	}
+	months := 0
+	for _, o := range objs {
+		month, ok := google.SalesMonth(o.Name)
+		if !ok || month.Before(cutoff) {
+			continue
+		}
+		body, err := c.Download(o.Name)
+		if err != nil {
+			errs = append(errs, err)
+			continue
+		}
+		rows, unknown, err := google.ParseSales(body, func(p string) string { return pkgToApp[strings.ToLower(p)] })
+		if err == nil {
+			err = d.ReplaceSlice(ctx, "google", "sales", month, month.AddDate(0, 1, -1), playApps, rows)
+		}
+		if err != nil {
+			d.LogRun(ctx, "google", "sales", &month, false, fmt.Sprintf("%s: %v", o.Name, err), 0)
+			errs = append(errs, fmt.Errorf("%s: %w", o.Name, err))
+			continue
+		}
+		msg := o.Name
+		if len(unknown) > 0 {
+			msg += "; unknown package: " + strings.Join(unknown, ", ")
+		}
+		d.LogRun(ctx, "google", "sales", &month, true, msg, len(rows))
+		months++
+	}
+	log.Printf("google: loaded %d sales months", months)
 	return errors.Join(errs...)
 }
