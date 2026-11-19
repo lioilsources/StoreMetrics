@@ -255,36 +255,44 @@ func runGoogle(ctx context.Context, d *db.DB, raw string, pkgToApp map[string]st
 	return errors.Join(errs...)
 }
 
-// runWeb reloads the last 30 days of olin.now metrics from Cloudflare (zone traffic always, Web Analytics when
-// CF_ACCOUNT_ID and CF_SITE_TAG are set). Recent days are still being filled in, so whole windows are replaced.
+// runWeb reloads the last 30 days of website metrics from Cloudflare for every site in CF_SITES
+// ("app:zone_id[:site_tag]", comma-separated; the older CF_ZONE_ID/CF_SITE_TAG pair still works for olin.now):
+// zone traffic always, Web Analytics when the site has a site tag (needs CF_ACCOUNT_ID).
+// Recent days are still being filled in, so whole windows are replaced.
 func runWeb(ctx context.Context, d *db.DB) error {
 	c, err := cloudflare.New(os.Getenv("CF_API_TOKEN"))
 	if err != nil {
 		return err
 	}
-	app := env("CF_SITE_APP", "olin.now")
-	apps := []string{app}
+	sites, err := cloudflare.ParseSites(os.Getenv("CF_SITES"))
+	if err != nil {
+		return err
+	}
+	if len(sites) == 0 && os.Getenv("CF_ZONE_ID") != "" {
+		sites = []cloudflare.Site{{App: env("CF_SITE_APP", "olin.now"), Zone: os.Getenv("CF_ZONE_ID"), SiteTag: os.Getenv("CF_SITE_TAG")}}
+	}
+	acct := os.Getenv("CF_ACCOUNT_ID")
 	today := time.Now().UTC().Truncate(24 * time.Hour)
 	from, to := today.AddDate(0, 0, -30), today.AddDate(0, 0, -1)
 	var errs []error
-
-	if zoneID := os.Getenv("CF_ZONE_ID"); zoneID != "" {
-		zone, country, err := c.Zone(zoneID, app, from, to)
+	for _, s := range sites {
+		apps := []string{s.App}
+		zone, country, err := c.Zone(s.Zone, s.App, from, to)
 		if err == nil {
 			err = d.ReplaceSlice(ctx, "web", cloudflare.KindZone, from, to, apps, zone)
 		}
 		if err == nil {
 			err = d.ReplaceSlice(ctx, "web", cloudflare.KindZoneCountry, from, to, apps, country)
 		}
-		d.LogRun(ctx, "web", cloudflare.KindZone, &to, err == nil, errMsg(err), len(zone))
+		d.LogRun(ctx, "web", cloudflare.KindZone, &to, err == nil, s.App+errMsg(err), len(zone))
 		if err != nil {
-			errs = append(errs, err)
+			errs = append(errs, fmt.Errorf("%s: %w", s.App, err))
 		} else {
-			log.Printf("web: zone %d days", len(zone))
+			log.Printf("web %s: zone %d days", s.App, len(zone))
 		}
-	}
-
-	if acct, site := os.Getenv("CF_ACCOUNT_ID"), os.Getenv("CF_SITE_TAG"); acct != "" && site != "" {
+		if s.SiteTag == "" || acct == "" {
+			continue
+		}
 		n := 0
 		// Adaptive datasets limit the queried range; a week per call stays well inside it.
 		for start := from; !start.After(to); start = start.AddDate(0, 0, 7) {
@@ -292,18 +300,18 @@ func runWeb(ctx context.Context, d *db.DB) error {
 			if end.After(to) {
 				end = to
 			}
-			rows, err := c.Visits(acct, site, app, start, end)
+			rows, err := c.Visits(acct, s.SiteTag, s.App, start, end)
 			if err == nil {
 				err = d.ReplaceSlice(ctx, "web", cloudflare.KindVisits, start, end, apps, rows)
 			}
-			d.LogRun(ctx, "web", cloudflare.KindVisits, &end, err == nil, errMsg(err), len(rows))
+			d.LogRun(ctx, "web", cloudflare.KindVisits, &end, err == nil, s.App+errMsg(err), len(rows))
 			if err != nil {
-				errs = append(errs, err)
+				errs = append(errs, fmt.Errorf("%s: %w", s.App, err))
 				continue
 			}
 			n += len(rows)
 		}
-		log.Printf("web: visits %d rows", n)
+		log.Printf("web %s: visits %d rows", s.App, n)
 	}
 	return errors.Join(errs...)
 }
@@ -312,5 +320,5 @@ func errMsg(err error) string {
 	if err == nil {
 		return ""
 	}
-	return err.Error()
+	return ": " + err.Error()
 }

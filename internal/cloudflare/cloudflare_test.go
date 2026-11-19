@@ -23,13 +23,23 @@ func TestParseZone(t *testing.T) {
 
 func TestParseVisits(t *testing.T) {
 	b := []byte(`{"data":{"viewer":{"accounts":[{"rumPageloadEventsAdaptiveGroups":[
-	 {"count":5,"sum":{"visits":3},"dimensions":{"date":"2026-11-18","countryName":"DE","requestPath":"/mirrorbooth/support?x=1","refererHost":"apps.apple.com"}}
+	 {"count":5,"sum":{"visits":3},"dimensions":{"date":"2026-11-18","countryName":"DE","requestHost":"olin.now","requestPath":"/mirrorbooth/support?x=1","refererHost":"apps.apple.com"}}
 	]}]}}}`)
 	rows, err := ParseVisits(b, "olin.now")
 	if err != nil || len(rows) != 1 {
 		t.Fatal(err, rows)
 	}
-	if r := rows[0]; r.Country != "DE" || r.Source != "/mirrorbooth/support" || r.Campaign != "apps.apple.com" || r.PageViews != 5 || r.Impressions != 3 {
+	if r := rows[0]; r.Country != "DE" || r.Source != "olin.now/mirrorbooth/support" || r.Campaign != "apps.apple.com" || r.PageViews != 5 || r.Impressions != 3 {
 		t.Fatalf("%+v", r)
+	}
+}
+
+func TestParseSites(t *testing.T) {
+	s, err := ParseSites("olin.now:z1:t1, ol1n.com:z2")
+	if err != nil || len(s) != 2 || s[0] != (Site{"olin.now", "z1", "t1"}) || s[1] != (Site{"ol1n.com", "z2", ""}) {
+		t.Fatal(err, s)
+	}
+	if _, err := ParseSites("olin.now"); err == nil {
+		t.Fatal("missing zone should fail")
 	}
 }

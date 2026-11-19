@@ -22,11 +22,11 @@ Vedle toho příjemce anonymního měření z appek (`telemetry-ingest`, sekce [
 | Google | `stats/store_performance/*_country.csv` | `store_performance` | návštěvy listingu (`page_views`), akvizice (`downloads`) |
 | Google | `stats/store_performance/*_traffic_source.csv` | `traffic` | totéž po zdroji a UTM kampani (QR) |
 | Google | `sales/salesreport_*.zip` | `sales` | nákupy (`units`, refundace −1) a cena bez DPH před poplatkem Googlu (`proceeds`); zip se neukládá, obsahuje město a PSČ kupujícího |
-| Web | Cloudflare zóna olin.now (`httpRequests1dGroups`) | `zone` | po dnech: `impressions` = požadavky, `page_views` = zobrazení, `active_devices` = unikátní návštěvníci; počítá i boty |
+| Web | Cloudflare zóny webů (`httpRequests1dGroups`) | `zone` | po dnech: `impressions` = požadavky, `page_views` = zobrazení, `active_devices` = unikátní návštěvníci; počítá i boty |
 | Web | totéž po zemích | `zone_country` | `impressions` = požadavky |
-| Web | Cloudflare Web Analytics (`rumPageloadEventsAdaptiveGroups`) | `visits` | skutečné prohlížeče: `page_views` = načtení stránky, `impressions` = návštěvy, `source` = cesta, `campaign` = odkazující doména |
+| Web | Cloudflare Web Analytics (`rumPageloadEventsAdaptiveGroups`) | `visits` | skutečné prohlížeče: `page_views` = načtení stránky, `impressions` = návštěvy, `source` = host + cesta, `campaign` = odkazující doména |
 
-Web (`store` = `web`, `app_id` = `olin.now`) se načítá, jen když je v `.env` `CF_API_TOKEN` (token jen pro čtení: Zone → Analytics → Read a Account → Account Analytics → Read) a `CF_ZONE_ID`; `visits` navíc potřebuje `CF_ACCOUNT_ID` a `CF_SITE_TAG` zapnutého Web Analytics. Každý běh přepíše posledních 30 dní.
+Weby (`store` = `web`, `app_id` = doména, např. `olin.now`, `ol1n.com`) se načítají, jen když je v `.env` `CF_API_TOKEN` (token jen pro čtení: Zone → Analytics → Read pro každou zónu a Account → Account Analytics → Read) a `CF_SITES` (`app:zone_id[:site_tag]`, odděleno čárkou); `visits` navíc potřebuje `CF_ACCOUNT_ID` a site tag zapnutého Web Analytics. Každý běh přepíše posledních 30 dní. Zóna ol1n.com zahrnuje i subdomény služeb za tunelem (llm, comfyui, status), její požadavky tedy nejsou jen web.
 
 `downloads` se nesčítá přes různé `kind` (u Play znamená jednou instalace, jednou akvizici z listingu).
 
