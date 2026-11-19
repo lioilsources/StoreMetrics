@@ -1,10 +1,10 @@
 [Unit]
-Description=Run store-metrics daily (Apple publishes the previous day in the morning CET)
+Description=Run store-metrics daily (Apple publishes the previous day in the morning CET, Google Play bulk reports refresh ~09:10 CET)
 
 [Timer]
-OnCalendar=*-*-* 09:30:00
+OnCalendar=*-*-* 10:00:00
 Persistent=true
-RandomizedDelaySec=10min
+RandomizedDelaySec=0
 
 [Install]
 WantedBy=timers.target

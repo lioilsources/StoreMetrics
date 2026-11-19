@@ -39,18 +39,21 @@ apps:
   - id: webtoon
     name: Toonfork
     play_package: com.ol1n.webtoon
-
-  # Telemetry only for now: not in a store yet, so no store identifiers.
   - id: hajanek
     name: Hajánek
+    play_package: com.ol1n.hajanek
+
+  # Telemetry only for now: not in a store yet, so no store identifiers.
   - id: papanek
     name: Papánek
   - id: behanek
     name: Běhánek
+    play_package: com.ol1n.behanek
   - id: immunorun
     name: ImmunoRun
   - id: handwrittenstickers
     name: HandWrittenStickers
+    play_package: com.ol1n.handwrittenStickers
   - id: alienmatch
     name: AlienMatch
   - id: restyler
