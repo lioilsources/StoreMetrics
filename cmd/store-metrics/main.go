@@ -20,6 +20,7 @@ import (
 	"gopkg.in/yaml.v3"
 
 	"github.com/lioilsources/store-metrics/internal/apple"
+	"github.com/lioilsources/store-metrics/internal/cloudflare"
 	"github.com/lioilsources/store-metrics/internal/db"
 	"github.com/lioilsources/store-metrics/internal/export"
 	"github.com/lioilsources/store-metrics/internal/google"
@@ -49,7 +50,7 @@ func main() {
 	}
 	cfgPath := flag.String("config", env("APPS_CONFIG", "apps.yaml"), "apps.yaml")
 	days := flag.Int("apple-days", 45, "how many past days of Apple Sales to make sure are loaded")
-	only := flag.String("only", "", "apple | google (default both)")
+	only := flag.String("only", "", "apple | google | web (default all)")
 	flag.Parse()
 	log.SetFlags(0)
 
@@ -90,6 +91,11 @@ func main() {
 	if *only == "" || *only == "google" {
 		if err := runGoogle(ctx, d, raw, pkgToApp); err != nil {
 			failed = append(failed, "google: "+err.Error())
+		}
+	}
+	if (*only == "" || *only == "web") && os.Getenv("CF_API_TOKEN") != "" {
+		if err := runWeb(ctx, d); err != nil {
+			failed = append(failed, "web: "+err.Error())
 		}
 	}
 	if p := os.Getenv("EXPORT_CSV"); p != "" {
@@ -247,4 +253,64 @@ func runGoogle(ctx context.Context, d *db.DB, raw string, pkgToApp map[string]st
 	}
 	log.Printf("google: loaded %d sales months", months)
 	return errors.Join(errs...)
+}
+
+// runWeb reloads the last 30 days of olin.now metrics from Cloudflare (zone traffic always, Web Analytics when
+// CF_ACCOUNT_ID and CF_SITE_TAG are set). Recent days are still being filled in, so whole windows are replaced.
+func runWeb(ctx context.Context, d *db.DB) error {
+	c, err := cloudflare.New(os.Getenv("CF_API_TOKEN"))
+	if err != nil {
+		return err
+	}
+	app := env("CF_SITE_APP", "olin.now")
+	apps := []string{app}
+	today := time.Now().UTC().Truncate(24 * time.Hour)
+	from, to := today.AddDate(0, 0, -30), today.AddDate(0, 0, -1)
+	var errs []error
+
+	if zoneID := os.Getenv("CF_ZONE_ID"); zoneID != "" {
+		zone, country, err := c.Zone(zoneID, app, from, to)
+		if err == nil {
+			err = d.ReplaceSlice(ctx, "web", cloudflare.KindZone, from, to, apps, zone)
+		}
+		if err == nil {
+			err = d.ReplaceSlice(ctx, "web", cloudflare.KindZoneCountry, from, to, apps, country)
+		}
+		d.LogRun(ctx, "web", cloudflare.KindZone, &to, err == nil, errMsg(err), len(zone))
+		if err != nil {
+			errs = append(errs, err)
+		} else {
+			log.Printf("web: zone %d days", len(zone))
+		}
+	}
+
+	if acct, site := os.Getenv("CF_ACCOUNT_ID"), os.Getenv("CF_SITE_TAG"); acct != "" && site != "" {
+		n := 0
+		// Adaptive datasets limit the queried range; a week per call stays well inside it.
+		for start := from; !start.After(to); start = start.AddDate(0, 0, 7) {
+			end := start.AddDate(0, 0, 6)
+			if end.After(to) {
+				end = to
+			}
+			rows, err := c.Visits(acct, site, app, start, end)
+			if err == nil {
+				err = d.ReplaceSlice(ctx, "web", cloudflare.KindVisits, start, end, apps, rows)
+			}
+			d.LogRun(ctx, "web", cloudflare.KindVisits, &end, err == nil, errMsg(err), len(rows))
+			if err != nil {
+				errs = append(errs, err)
+				continue
+			}
+			n += len(rows)
+		}
+		log.Printf("web: visits %d rows", n)
+	}
+	return errors.Join(errs...)
+}
+
+func errMsg(err error) string {
+	if err == nil {
+		return ""
+	}
+	return err.Error()
 }
